@@ -64,7 +64,6 @@ public class Menu {
         if(lottoNumbers.size() < 6) {
             System.out.println("Obstaw najpierw liczby!");
         } else {
-            // Krótszy sposób na policzenie tego, skoro robisz teraz lambdy itd. to pewnie znasz te rzeczy :)
             System.out.println("Trafiłeś " + lottoNumbers.stream().filter(userNumbers::contains).count() + " liczb");
         }
     }

@@ -15,7 +15,6 @@ public class RealLotto {
                 String userDate = getDateFromUser();
                 boolean lotteryInUserDateExists = printResultsFromThisDate(userDate);
                 if (!lotteryInUserDateExists) {
-
                     System.out.println("W podanym dniu nie odbyło się losowanie");
                     LottoNumbers.stopProgram(2000);
                     boolean closestDateWithLotteryFound;
@@ -126,13 +125,12 @@ public class RealLotto {
     }
 
     private static boolean printResultFromNextFoundDate (String newDate) {
-        String fileName = "C:\\Users\\termo\\Downloads\\Lotto.txt";
+        String fileName = "Lotto.txt";
         try (
                 var fileReader = new FileReader(fileName);
                 var reader = new BufferedReader(fileReader)
         ) {
             String nextLine;
-            do {
                 while ((nextLine = reader.readLine()) != null) {
                     if (nextLine.contains(newDate)) {
                         System.out.println("Najbliższe losowanie odbyło się " + newDate + " i padły w nim następujące liczby:" +
@@ -143,7 +141,6 @@ public class RealLotto {
                         return true;
                     }
                 }
-            } while (nextLine!=null);
         } catch (IOException e) {
             e.printStackTrace();
         }
