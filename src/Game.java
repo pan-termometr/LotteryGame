@@ -23,25 +23,16 @@ public class Game {
                     fileMethods.saveToFile(lottoNumbers);
                     LottoNumbers.showMustGoOn();
                 }
-                case 3 -> {
-                    Menu.showResults(userNumbers, lottoNumbers);
-                    LottoNumbers.stopProgram(WAIT_TIME_3);
-                }
-                case 4 -> {
-                    fileMethods.printHistory();
-                    LottoNumbers.stopProgram(WAIT_TIME_3);
-                }
-                case 5 -> {
-                    fileMethods.deleteHistory();
-                    LottoNumbers.stopProgram(WAIT_TIME_3);
-                }
+                case 3 -> Menu.showResults(userNumbers, lottoNumbers);
+                case 4 -> fileMethods.printHistory();
+                case 5 -> fileMethods.deleteHistory();
                 case 6 -> RealLotto.downloadHistory();
                 case 7 -> RealLotto.realLottoMenu();
                 case 8 -> RealLottoCompare.compare(userNumbers);
                 case 9 -> exit = true;
                 default -> {
                     System.out.println("Wybrano niewłaściwą opcję");
-                    LottoNumbers.stopProgram(WAIT_TIME_3);
+                    RealLotto.pressToContinue();
                 }
             }
         } while (!exit);

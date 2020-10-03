@@ -7,7 +7,6 @@ import java.util.stream.IntStream;
 public class LottoNumbers {
 
     static List<Integer> lottoNumbers = new ArrayList<>();
-    //ThreadLocalRandom.current().nextInt(0, 50)
     public static List<Integer> chooseSix() {
         List<Integer> lottoNumbers =
                 IntStream.range(1, 49)
