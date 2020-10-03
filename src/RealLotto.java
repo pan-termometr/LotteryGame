@@ -170,7 +170,8 @@ public class RealLotto {
                                 nextLine.substring(nextLine.lastIndexOf(" ")));
                         LottoNumbers.stopProgram(Game.WAIT_TIME_2);
                         System.out.println("Było to " + nextLine.substring(0, nextLine.indexOf(".")) + " losowanie w historii.");
-                        LottoNumbers.stopProgram(Game.WAIT_TIME_3);
+                        LottoNumbers.stopProgram(Game.WAIT_TIME_2);
+                        RealLotto.pressToContinue();
                         return true;
                     }
                 }
@@ -187,6 +188,7 @@ public class RealLotto {
         } catch (IOException e) {
             System.out.println("Wystąpił problem przy pobieraniu pliku");
         }
+        RealLotto.pressToContinue();
     }
 
     public static void download() throws IOException {

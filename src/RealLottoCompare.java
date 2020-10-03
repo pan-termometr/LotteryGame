@@ -38,7 +38,7 @@ public class RealLottoCompare {
                 if (showResults(RealLottoCompare.list.get(i), userNumber) == 6)
                     num6++;
             }
-            System.out.println("Trafiłeś:" +
+            System.out.println("Trafiłbyś:" +
                     "\nszóstkę " + num6 + " razy" +
                     "\npiątkę " + num5 + " razy" +
                     "\nczwórkę " + num4 + " razy" +
@@ -124,7 +124,7 @@ public class RealLottoCompare {
                     if (userNumber.equals(nextLine.substring(nextLine.lastIndexOf(" ") + 1))) {
                         System.out.println("Trafiłbyś szóstkę w dniu: " +
                                 nextLine.substring(nextLine.indexOf(" ") + 1, nextLine.lastIndexOf(" ")) +
-                                " podczas " + nextLine.substring(0, nextLine.indexOf(" ")) + " losowania w historii");
+                                " podczas " + nextLine.substring(0, nextLine.indexOf(" ") - 1) + " losowania w historii");
                     }
                 }
             }
