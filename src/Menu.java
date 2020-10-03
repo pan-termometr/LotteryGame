@@ -11,8 +11,10 @@ public class Menu {
                                 "\n3. Sprawdź wyniki" +
                                 "\n4. Pokaż historię losowań tej gry" +
                                 "\n5. Usuń historię losowań tej gry" +
-                                "\n6. Prawdziwa historia losowań Lotto" +
-                                "\n7. Wyjście.");
+                                "\n6. Pobierz najnowszą historię losowań" +
+                                "\n7. Sprawdź prawdziwe wyniki Lotto" +
+                                "\n8. Sprawdź czy trafiłbyś kiedykolwiek w historii" +
+                                "\n9. Wyjście.");
     }
 
     public static int getUserChoice() {
@@ -29,7 +31,7 @@ public class Menu {
         for (String s : userNumbers) userNumbersAsIntegers.add(Integer.valueOf(s));
         Collections.sort(userNumbersAsIntegers);
         System.out.println("Dziękujemy za podanie 6 liczb");
-        LottoNumbers.stopProgram(Game.WAIT_TIME_3);
+        RealLotto.pressToContinue();
         return userNumbersAsIntegers;
     }
 
@@ -40,7 +42,8 @@ public class Menu {
 
     public static List<Integer> getRandomNumbers() {
         System.out.println("Liczby na chybił trafił zostały wybrane.");
-        LottoNumbers.stopProgram(Game.WAIT_TIME_3);
+        LottoNumbers.stopProgram(Game.WAIT_TIME_2);
+        RealLotto.pressToContinue();
         return LottoNumbers.chooseSix();
     }
 
@@ -48,23 +51,27 @@ public class Menu {
         List<Integer> choosenNumbers = new ArrayList<>();
         printOptionToChooseNumbers();
         switch (getUserChoice()) {
-            case 1:
-                choosenNumbers = getNumbersFromUser();
-                break;
-            case 2:
-                choosenNumbers = getRandomNumbers();
-                break;
-            default:
-                System.out.println("Wybrano niewłaściwą opcję");
+            case 1 -> choosenNumbers = getNumbersFromUser();
+            case 2 -> choosenNumbers = getRandomNumbers();
+            default -> System.out.println("Wybrano niewłaściwą opcję");
         }
         return choosenNumbers;
     }
 
     public static void showResults(List<Integer> lottoNumbers, List<Integer> userNumbers) {
-        if(lottoNumbers.size() < 6) {
-            System.out.println("Obstaw najpierw liczby!");
+        if (lottoNumbers.size() < 6) {
+            System.out.println("Najpierw musisz obstawić liczby");
+            RealLotto.pressToContinue();
+        } else if (userNumbers.isEmpty()) {
+            System.out.println("Najpierw musisz przeprowadzić losowanie");
+            RealLotto.pressToContinue();
         } else {
+            System.out.println("Twoje liczby: " + userNumbers);
+            LottoNumbers.stopProgram(Game.WAIT_TIME_2_5);
+            System.out.println("Wylosowane liczby: " + lottoNumbers);
+            LottoNumbers.stopProgram(Game.WAIT_TIME_2_5);
             System.out.println("Trafiłeś " + lottoNumbers.stream().filter(userNumbers::contains).count() + " liczb");
         }
+
     }
 }

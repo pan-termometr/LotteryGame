@@ -17,39 +17,32 @@ public class Game {
         do {
         Menu.printOption();
             switch (Menu.getUserChoice()) {
-                case 1:
-                    userNumbers = Menu.getNumbers();
-                    break;
-                case 2:
+                case 1 -> userNumbers = Menu.getNumbers();
+                case 2 -> {
                     lottoNumbers = LottoNumbers.chooseSix();
                     fileMethods.saveToFile(lottoNumbers);
                     LottoNumbers.showMustGoOn();
-                    break;
-                case 3:
-                    System.out.println("Twoje liczby: " + userNumbers);
-                    LottoNumbers.stopProgram(WAIT_TIME_3);
-                    System.out.println("Wylosowane liczby: " + lottoNumbers);
-                    LottoNumbers.stopProgram(WAIT_TIME_3);
+                }
+                case 3 -> {
                     Menu.showResults(userNumbers, lottoNumbers);
                     LottoNumbers.stopProgram(WAIT_TIME_3);
-                    break;
-                case 4:
+                }
+                case 4 -> {
                     fileMethods.printHistory();
                     LottoNumbers.stopProgram(WAIT_TIME_3);
-                    break;
-                case 5:
+                }
+                case 5 -> {
                     fileMethods.deleteHistory();
                     LottoNumbers.stopProgram(WAIT_TIME_3);
-                    break;
-                case 6:
-                    RealLotto.realLottoMenu();
-                    break;
-                case 7:
-                    exit = true;
-                    break;
-                default:
+                }
+                case 6 -> RealLotto.downloadHistory();
+                case 7 -> RealLotto.realLottoMenu();
+                case 8 -> RealLottoCompare.compare(userNumbers);
+                case 9 -> exit = true;
+                default -> {
                     System.out.println("Wybrano niewłaściwą opcję");
                     LottoNumbers.stopProgram(WAIT_TIME_3);
+                }
             }
         } while (!exit);
     }

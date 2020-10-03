@@ -1,13 +1,14 @@
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.IOException;
+import java.io.*;
+import java.net.URL;
+import java.nio.channels.Channels;
+import java.nio.channels.ReadableByteChannel;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Scanner;
 
 public class RealLotto {
-
+    public static final String FILE_NAME = "Lotto.txt";
     public static void realLottoMenu() {
         printOption();
         switch (Menu.getUserChoice()) {
@@ -16,7 +17,7 @@ public class RealLotto {
                 boolean lotteryInUserDateExists = printResultsFromThisDate(userDate);
                 if (!lotteryInUserDateExists) {
                     System.out.println("W podanym dniu nie odbyło się losowanie");
-                    LottoNumbers.stopProgram(2000);
+                    LottoNumbers.stopProgram(Game.WAIT_TIME_2);
                     boolean closestDateWithLotteryFound;
                     do {
                         closestDateWithLotteryFound = findNextResult(userDate);
@@ -24,7 +25,7 @@ public class RealLotto {
                 }
                 break;
             case 2:
-                System.out.println("Chuj Cie wie jak to policzyć");
+                CountNumbers.countNumbers();
                 break;
             case 3:
         }
@@ -37,12 +38,48 @@ public class RealLotto {
     }
 
     private static String getDateFromUser() {
-        System.out.println("Historia dotyczy gier z zakresu: 27.01.1957 - 17.09.2020.");
+
+        System.out.println("Historia dotyczy gier z zakresu: 27.01.1957 - " + getLastLotteryDate());
         String day = convertNumberToString(getNumberFromUser(0, 32, "dzień"));
         String month = convertNumberToString(getNumberFromUser(0, 12, "miesiąc"));
         String year = convertNumberToString(getNumberFromUser(1957, 2020, "rok"));
-        String fullDate = connectStrings(day, month, year);
-        return fullDate;
+        return connectStrings(day, month, year);
+    }
+
+    private static String getLastLotteryDate() {
+        try (
+                var fileReader = new FileReader(RealLotto.FILE_NAME);
+                var reader = new BufferedReader(fileReader)
+        ) {
+            String nextLine;
+            int lastLine = lastLineNumber();
+            int i = 1;
+            while ((nextLine = reader.readLine()) != null) {
+                if (lastLine == i) {
+                    return nextLine.substring(nextLine.indexOf(" ") + 1, nextLine.lastIndexOf(" "));
+                } else {
+                    i++;
+                }
+            }
+        } catch(IOException e) {
+            System.out.println("Nie znaleziono pliku");
+        }
+        return "";
+    }
+
+    public static int lastLineNumber() {
+        File file = new File(FILE_NAME);
+        LineNumberReader lineNumberReader;
+        try {
+            lineNumberReader = new LineNumberReader(new FileReader(file));
+            lineNumberReader.skip(Long.MAX_VALUE);
+            int lines = lineNumberReader.getLineNumber();
+            lineNumberReader.close();
+            return lines;
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return 0;
     }
 
     private static int getNumberFromUser(int intMin, int intMax, String text) {
@@ -70,29 +107,26 @@ public class RealLotto {
     }
 
     private static String connectStrings(String s1, String s2, String s3){
-        String fullDate = s1 + "." + s2 + "." + s3;
-        return fullDate;
+        return s1 + "." + s2 + "." + s3;
     }
 
     private static boolean printResultsFromThisDate(String userDate) {
-        String fileName = "Lotto.txt";
+
         try (
-                var fileReader = new FileReader(fileName);
+                var fileReader = new FileReader(RealLotto.FILE_NAME);
                 var reader = new BufferedReader(fileReader)
         ) {
             String nextLine;
-            do {
                 while ((nextLine = reader.readLine()) != null) {
                     if (nextLine.contains(userDate)) {
                         System.out.println("Wyniki losowania z wybranego dnia: " + userDate + " to:" +
                                 nextLine.substring(nextLine.lastIndexOf(" ")));
-                        LottoNumbers.stopProgram(2000);
+                        LottoNumbers.stopProgram(Game.WAIT_TIME_2);
                         System.out.println("\nByło to " + nextLine.substring(0, nextLine.indexOf(".")) + " losowanie w historii.");
-                        LottoNumbers.stopProgram(2000);
+                        LottoNumbers.stopProgram(Game.WAIT_TIME_2);
                         return true;
                     }
                 }
-            } while (nextLine != null);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -120,14 +154,13 @@ public class RealLotto {
             e.printStackTrace();
         }
         c.add(Calendar.DAY_OF_MONTH, i);
-        String newDate = sdf.format(c.getTime());
-        return newDate;
+        return sdf.format(c.getTime());
     }
 
     private static boolean printResultFromNextFoundDate (String newDate) {
-        String fileName = "Lotto.txt";
+
         try (
-                var fileReader = new FileReader(fileName);
+                var fileReader = new FileReader(RealLotto.FILE_NAME);
                 var reader = new BufferedReader(fileReader)
         ) {
             String nextLine;
@@ -135,9 +168,9 @@ public class RealLotto {
                     if (nextLine.contains(newDate)) {
                         System.out.println("Najbliższe losowanie odbyło się " + newDate + " i padły w nim następujące liczby:" +
                                 nextLine.substring(nextLine.lastIndexOf(" ")));
-                        LottoNumbers.stopProgram(2000);
+                        LottoNumbers.stopProgram(Game.WAIT_TIME_2);
                         System.out.println("Było to " + nextLine.substring(0, nextLine.indexOf(".")) + " losowanie w historii.");
-                        LottoNumbers.stopProgram(3000);
+                        LottoNumbers.stopProgram(Game.WAIT_TIME_3);
                         return true;
                     }
                 }
@@ -145,5 +178,27 @@ public class RealLotto {
             e.printStackTrace();
         }
         return false;
+    }
+
+    public static void downloadHistory() {
+        try {
+            download();
+            System.out.println("Pomyślnie pobrano wyniki losowań");
+        } catch (IOException e) {
+            System.out.println("Wystąpił problem przy pobieraniu pliku");
+        }
+    }
+
+    public static void download() throws IOException {
+        URL website = new URL("http://www.mbnet.com.pl/dl.txt");
+        ReadableByteChannel rbc = Channels.newChannel(website.openStream());
+        FileOutputStream fos = new FileOutputStream("Lotto.txt");
+        fos.getChannel().transferFrom(rbc, 0, Long.MAX_VALUE);
+    }
+
+    public static void pressToContinue() {
+        Scanner sc = new Scanner(System.in);
+        System.out.println("Naciśnij dowolny klawisz aby kontynuować.");
+        sc.nextLine();
     }
 }
